@@ -1,9 +1,11 @@
 #include <SFML/Graphics.hpp>
+#include "Grid.h"
 
 int main() {
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	sf::RenderWindow window(sf::VideoMode(1000, 1000), "SFML window");
+
+	Grid grid = Grid();
+	
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -11,9 +13,11 @@ int main() {
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
-
 		window.clear();
-		window.draw(shape);
+		for (const auto& cells : grid.draw()) {
+			window.draw(cells);
+		}
+
 		window.display();
 	}
 
