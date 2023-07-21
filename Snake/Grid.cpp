@@ -1,7 +1,7 @@
 #include "Grid.h"
 
 Grid::Grid()
-	:cellSize{ 50 }, numRows{ 20 }, numColumns{ 20 }, tileColor1{ sf::Color(61,145,64,255)}, tileColor2{sf::Color(123,182,97)} {}
+	:cellSize{ 50 }, numRows{ 16 }, numColumns{ 16 }, tileColor1{ sf::Color(61,145,64,255)}, tileColor2{sf::Color(123,182,97)} {}
 
 std::vector<sf::RectangleShape> Grid::draw() {
 	std::vector<sf::RectangleShape> grid;
