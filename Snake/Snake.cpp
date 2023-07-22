@@ -11,7 +11,7 @@ std::vector<sf::CircleShape>  Snake::draw() {
 		segment.setFillColor(snakeColor);
 		segment.setRadius(radius);
 
-		segment.setPosition(2 * radius * i + 400, 100);
+		segment.setPosition(2 * radius * i, 200);
 
 		body.push_back(segment);
 
@@ -33,7 +33,7 @@ bool Snake::isHitWall() {
 	else
 		return false;
 	
-}void Snake::moveRight() { //this move the snake by erasing the tail and adding the head of to body
+}void Snake::moveRight() { //this move the snake by erasing the tail and adding the head to body
 	snakeBody.erase(snakeBody.begin());
 	sf::CircleShape newHead;
 	newHead.setRadius(radius);
