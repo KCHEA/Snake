@@ -8,12 +8,21 @@ int main() {
 	window.setFramerateLimit(3);
 	
 	Grid grid = Grid();
-	Snake snake = Snake();
-	Food food = Food();
 
+	Snake snake = Snake();
+	std::vector<sf::CircleShape> snakeBody;
+	sf::CircleShape snakeHead;
+	sf::Vector2f snakeHeadPosition;
+	float snakeX;
+	float snakeY;
+
+	Food food = Food();
 	sf::CircleShape foodDrawn;
 	sf::Vector2f foodPosition;
+	float foodX;
+	float foodY;
 	
+	bool startingMove = true;
 	
 	bool DKeyPressedOnce = false;
 	bool AKeyPressedOnce = false;
@@ -41,20 +50,16 @@ int main() {
 		bool AKeyPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
 		bool SKeyPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
 		bool WKeyPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
-		
 
-		//draw the food first
-		foodDrawn = food.draw();
-		foodPosition = foodDrawn.getPosition();
-
-		window.draw(foodDrawn);
 
 		//snake will go right for these two if statements
-		if (!snake.isHitWall() && DKeyPressed && !DKeyPressedOnce && !AKeyPressedOnce) {
+		
+		 if (!snake.isHitWall() && DKeyPressed && !DKeyPressedOnce && !AKeyPressedOnce) {
 			snake.moveRight();
 
 			SKeyPressedOnce = false;
 			WKeyPressedOnce = false;
+			startingMove = false;
 
 			DKeyPressedOnce = true;
 		}
@@ -69,12 +74,13 @@ int main() {
 
 			WKeyPressedOnce = false;
 			SKeyPressedOnce = false;
-			
+			startingMove = false;
+
 			AKeyPressedOnce = true;
 		}
-		else if (!snake.isHitWall() && AKeyPressedOnce && !SKeyPressed && !WKeyPressed) 
+		else if (!snake.isHitWall() && AKeyPressedOnce && !SKeyPressed && !WKeyPressed)
 			snake.moveLeft();
-		
+
 
 
 		//snake will go down for these two if statements
@@ -83,6 +89,7 @@ int main() {
 
 			AKeyPressedOnce = false;
 			DKeyPressedOnce = false;
+			startingMove = false;
 
 			SKeyPressedOnce = true;
 		}
@@ -97,19 +104,33 @@ int main() {
 
 			AKeyPressedOnce = false;
 			DKeyPressedOnce = false;
+			startingMove = false;
 
 			WKeyPressedOnce = true;
 		}
 		else if (!snake.isHitWall() && WKeyPressedOnce && !DKeyPressed && !AKeyPressed)
 			snake.moveUp();
-		
-		
-		
+		 //the snake will move to the right if no key is pressed
+		else if (!snake.isHitWall() && startingMove) {
+			 snake.moveRight();
+		 }
 
-		
-		
 		//implement the snake eating the apple
+		 snakeBody = snake.getBody();
+		 snakeHead = snakeBody.back();
+		 snakeHeadPosition = snakeHead.getPosition();
+		 snakeX = snakeHeadPosition.x;
+		 snakeY = snakeHeadPosition.y;
 
+		 foodDrawn = food.draw();
+		 foodPosition = foodDrawn.getPosition();
+		 foodX = foodPosition.x;
+		 foodY = foodPosition.y;
+
+		//we need to check if the snake head touch the food
+		 if (snakeX != foodX || snakeY != foodY) {
+			 window.draw(foodDrawn);
+		}
 		
 		
 		window.display();
