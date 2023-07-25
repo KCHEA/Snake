@@ -5,8 +5,8 @@
 
 class Snake {
 private:
-	float length;
-	float radius;
+	int length;
+	int radius;
 	sf::Color snakeColor;
 	std::vector<sf::CircleShape>  draw();
 	std::vector<sf::CircleShape>  snakeBody;
@@ -18,5 +18,7 @@ public:
 	void moveUp();
 	void moveDown();
 	bool isHitWall();
+	bool isHitBody();
 	void grow();
+	void gameOver();
 };

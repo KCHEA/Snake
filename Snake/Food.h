@@ -7,5 +7,5 @@ private:
 	sf::Color color;
 public:
 	Food();
-	sf::CircleShape draw();
+	sf::CircleShape draw(float x, float y);
 };

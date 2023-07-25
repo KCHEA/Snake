@@ -2,6 +2,7 @@
 #include "Grid.h"
 #include "Snake.h"
 #include "Food.h"
+#include <random>
 
 int main() {
 	sf::RenderWindow window(sf::VideoMode(800, 800), "Snake");
@@ -21,13 +22,23 @@ int main() {
 	sf::Vector2f foodPosition;
 	float foodX;
 	float foodY;
+	bool foodSpawn = true;
 	
 	bool startingMove = true;
-	
 	bool DKeyPressedOnce = false;
 	bool AKeyPressedOnce = false;
 	bool SKeyPressedOnce = false;
 	bool WKeyPressedOnce = false;
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	int lower_bound = 0;
+	int upper_bound = 800;
+	std::uniform_int_distribution<int> distribution(lower_bound/50, upper_bound/50);
+	int randomX;
+	int randomY;
+	int staticX;
+	int staticY;
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -54,7 +65,7 @@ int main() {
 
 		//snake will go right for these two if statements
 		
-		 if (!snake.isHitWall() && DKeyPressed && !DKeyPressedOnce && !AKeyPressedOnce) {
+		 if (!snake.isHitWall() && !snake.isHitBody() && DKeyPressed && !DKeyPressedOnce && !AKeyPressedOnce) {
 			snake.moveRight();
 
 			SKeyPressedOnce = false;
@@ -64,12 +75,12 @@ int main() {
 			DKeyPressedOnce = true;
 		}
 
-		else if (!snake.isHitWall() && DKeyPressedOnce && !SKeyPressed && !WKeyPressed)
+		else if (!snake.isHitWall() && !snake.isHitBody() && DKeyPressedOnce && !SKeyPressed && !WKeyPressed)
 			snake.moveRight();
 
 
 		//snake will go left for these two if statements
-		else if (!snake.isHitWall() && AKeyPressed && !AKeyPressedOnce && !DKeyPressedOnce) {
+		else if (!snake.isHitWall() && !snake.isHitBody() && AKeyPressed && !AKeyPressedOnce && !DKeyPressedOnce) {
 			snake.moveLeft();
 
 			WKeyPressedOnce = false;
@@ -78,13 +89,13 @@ int main() {
 
 			AKeyPressedOnce = true;
 		}
-		else if (!snake.isHitWall() && AKeyPressedOnce && !SKeyPressed && !WKeyPressed)
+		else if (!snake.isHitWall() && !snake.isHitBody() && AKeyPressedOnce && !SKeyPressed && !WKeyPressed)
 			snake.moveLeft();
 
 
 
 		//snake will go down for these two if statements
-		else if (!snake.isHitWall() && SKeyPressed && !SKeyPressedOnce && !WKeyPressedOnce) {
+		else if (!snake.isHitWall() && !snake.isHitBody() && SKeyPressed && !SKeyPressedOnce && !WKeyPressedOnce) {
 			snake.moveDown();
 
 			AKeyPressedOnce = false;
@@ -94,12 +105,12 @@ int main() {
 			SKeyPressedOnce = true;
 		}
 
-		else if (!snake.isHitWall() && SKeyPressedOnce && !DKeyPressed && !AKeyPressed)
+		else if (!snake.isHitWall() && !snake.isHitBody() && SKeyPressedOnce && !DKeyPressed && !AKeyPressed)
 			snake.moveDown();
 
 
 		//snake will go up for these two if statements
-		else if (!snake.isHitWall() && WKeyPressed && !WKeyPressedOnce && !SKeyPressedOnce) {
+		else if (!snake.isHitWall() && !snake.isHitBody() && WKeyPressed && !WKeyPressedOnce && !SKeyPressedOnce) {
 			snake.moveUp();
 
 			AKeyPressedOnce = false;
@@ -108,32 +119,47 @@ int main() {
 
 			WKeyPressedOnce = true;
 		}
-		else if (!snake.isHitWall() && WKeyPressedOnce && !DKeyPressed && !AKeyPressed)
+		else if (!snake.isHitWall() && !snake.isHitBody() && WKeyPressedOnce && !DKeyPressed && !AKeyPressed)
 			snake.moveUp();
 		 //the snake will move to the right if no key is pressed
-		else if (!snake.isHitWall() && startingMove) {
+		else if (!snake.isHitWall() && !snake.isHitBody() && startingMove) {
 			 snake.moveRight();
 		 }
 
-		//implement the snake eating the apple
+		 if (snake.isHitWall() || snake.isHitBody()) {
+			 snake.gameOver();
+		 }
+
+		//implement the snake eating the food and the food randomly appearing on another grid after being eaten
+		 if (foodSpawn) {
+			 randomX = distribution(gen);
+			 randomY = distribution(gen);
+			 staticX = randomX;
+			 staticY = randomY;
+			 foodSpawn = false;
+		 }
+		 else if (snakeX == foodX && snakeY == foodY) {
+			 foodSpawn = true;
+		 }
+
 		 snakeBody = snake.getBody();
 		 snakeHead = snakeBody.back();
 		 snakeHeadPosition = snakeHead.getPosition();
 		 snakeX = snakeHeadPosition.x;
 		 snakeY = snakeHeadPosition.y;
 
-		 foodDrawn = food.draw();
+		 foodDrawn = food.draw(staticX * 50, staticY * 50);
 		 foodPosition = foodDrawn.getPosition();
 		 foodX = foodPosition.x;
 		 foodY = foodPosition.y;
 
-		//we need to check if the snake head touch the food
-		 if (snakeX != foodX || snakeY != foodY) {
-			 window.draw(foodDrawn);
-		}
+		 if (snakeX == foodX && snakeY == foodY)
+			 snake.grow();
+		 
 		
+		 window.draw(foodDrawn);
 		
-		window.display();
+		 window.display();
 	}
 
 	return 0;

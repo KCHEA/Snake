@@ -1,4 +1,5 @@
 #include "Snake.h"
+#include <iostream>
 
 Snake::Snake()
 	:length{ 3 }, radius{ 25 }, snakeColor{ sf::Color(150,113,23,255) }, snakeBody {draw()} {}
@@ -28,12 +29,32 @@ bool Snake::isHitWall() {
 	sf::CircleShape head = snakeBody.back();
 	sf::Vector2f headPosition = head.getPosition();
 
-	if (headPosition.x < 50 || headPosition.x > 700 || headPosition.y < 50 || headPosition.y > 700)
+	if (headPosition.x < 0 || headPosition.x > 800 || headPosition.y < 0 || headPosition.y > 800)
 		return true;
 	else
 		return false;
-	
-}void Snake::moveRight() { //this move the snake by erasing the tail and adding the head to body
+}
+
+bool Snake::isHitBody() {
+	sf::CircleShape head = snakeBody.back();
+	sf::Vector2f headPosition = head.getPosition();
+
+	sf::CircleShape bodySegment;
+	sf::Vector2f segmentPosition;
+
+	size_t n = snakeBody.size();
+
+	for (int i = 0; i < n - 1; i++) {
+		bodySegment = snakeBody[i];
+		segmentPosition = bodySegment.getPosition();
+		if (headPosition.x == segmentPosition.x && headPosition.y == segmentPosition.y)
+			return true;
+	}
+
+	return false;
+}
+
+void Snake::moveRight() { //this move the snake by erasing the tail and adding the head to body
 	snakeBody.erase(snakeBody.begin());
 	sf::CircleShape newHead;
 	newHead.setRadius(radius);
@@ -102,4 +123,8 @@ void Snake::grow() {
 	newTail.setPosition(-2 * radius + position.x, position.y);
 
 	snakeBody.insert(snakeBody.begin(), newTail);
+}
+
+void Snake::gameOver() {
+	std::cout << "Game Over" << std::endl;
 }
